@@ -5,8 +5,11 @@ baremetal:
 
 cookbooks:
   hopsworks:                                                                     
-    github: "hopshadoop/hopsworks-chef"
-    branch: "master"
+    github: "AlexHopsworks/hopsworks-chef"
+    branch: "alex2"
+  dela:                                                                     
+    github: "hopshadoop/dela-chef"
+    branch: "local" 
 
 attrs:
   install:
@@ -16,9 +19,16 @@ attrs:
     network:
       interface: enp0s3
   hopsworks:
+    email: "dela1@gmail.com"
     ear_url: http://snurran.sics.se/hops/hopsworks/0.1.0/hopsworks-ear.ear
     war_url: http://snurran.sics.se/hops/hopsworks/0.1.0/hopsworks.war
     ca_url: http://snurran.sics.se/hops/hopsworks/0.1.0/hopsworks-ca.war
+    dela:
+      domain: "bbc1.sics.se"
+      public_port: 24100
+      hops_site:
+        domain: "bbc1.sics.se"
+        port: 24100
 groups:
   dela:
     size: 1
