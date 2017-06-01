@@ -7,9 +7,6 @@ cookbooks:
   hopsworks:                                                                     
     github: "AlexHopsworks/hopsworks-chef"
     branch: "alex2"
-  dela:                                                                     
-    github: "hopshadoop/dela-chef"
-    branch: "local" 
 
 attrs:
   install:
@@ -18,14 +15,26 @@ attrs:
   kagent:
     network:
       interface: enp0s3
+  dela:
+    port: 42100
+    stun_port1: 43100
+    stun_port2: 44100
+    http_port: 45100
+    hops: 
+      storage:
+        type: "HDFS"
+      library:
+        type: "DISK"
+    stun_servers_ip: ["193.10.64.107","193.10.64.85"]
+    stun_servers_id: ["1","2"]
   hopsworks:
     email: "dela1@gmail.com"
-    ear_url: http://snurran.sics.se/hops/hopsworks/0.1.0/hopsworks-ear.ear
-    war_url: http://snurran.sics.se/hops/hopsworks/0.1.0/hopsworks.war
-    ca_url: http://snurran.sics.se/hops/hopsworks/0.1.0/hopsworks-ca.war
+    ear_url: http://snurran.sics.se/hops/dela/hopsworks-ear.ear
+    war_url: http://snurran.sics.se/hops/dela/hopsworks.war
+    ca_url: http://snurran.sics.se/hops/dela/hopsworks-ca.war
     dela:
-      domain: "bbc1.sics.se"
-      public_port: 24100
+      cluster_http_port: 45100
+      public_hopsworks_port: 24100
       hops_site:
         domain: "bbc1.sics.se"
         port: 24100
@@ -60,3 +69,4 @@ groups:
       - hops::nm
       - tensorflow
       - hopsmonitor::telegraf
+      - dela
