@@ -6,7 +6,7 @@ baremetal:
 cookbooks:
   hopsworks:                                                                     
     github: "AlexHopsworks/hopsworks-chef"
-    branch: "alex2"
+    branch: "local"
 
 attrs:
   install:
