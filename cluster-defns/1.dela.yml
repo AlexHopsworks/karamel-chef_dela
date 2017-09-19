@@ -11,7 +11,6 @@ cookbooks:
 attrs:
   install:
     dir: /srv/hops
-    user: vagrant
   kagent:
     network:
       interface: enp0s3
@@ -27,6 +26,7 @@ attrs:
         type: "DISK"
     stun_servers_ip: ["193.10.64.107","193.10.64.85"]
     stun_servers_id: ["1","2"]
+  enabled: "true"
   hopsworks:
     port: 8080
     email: "dela1@gmail.com"
