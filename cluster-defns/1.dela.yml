@@ -11,6 +11,7 @@ cookbooks:
 attrs:
   install:
     dir: /srv/hops
+    user: vagrant
   kagent:
     network:
       interface: enp0s3
@@ -26,7 +27,7 @@ attrs:
         type: "DISK"
     stun_servers_ip: ["193.10.64.107","193.10.64.85"]
     stun_servers_id: ["1","2"]
-  enabled: "true"
+    enabled: true
   hopsworks:
     port: 8080
     email: "dela1@gmail.com"
@@ -39,9 +40,10 @@ attrs:
     dela:
       cluster_http_port: 45100
       public_hopsworks_port: 24100
-      hops_site:
-        domain: "bbc1.sics.se"
-        port: 24100
+    hopssite:
+      domain: "bbc1.sics.se"
+      port: 24100
+      heartbeat: 600000
   hopssite:
     url: "http://bbc1.sics.se:24100"
     retry_interval: 30
