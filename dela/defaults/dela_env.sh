@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #these variables are used together with 'sed' so please make sure to escape all / characters
-GITHUB="hopshadoop\/hopsworks-chef"
-BRANCH="master"
+GITHUB="AlexHopsworks\/hopsworks-chef"
+BRANCH="vdcurrent"
 CLUSTER_MULTI_USER=false
 CLUSTER_OS="ubuntu"
 
