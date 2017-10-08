@@ -5,8 +5,8 @@ baremetal:
 
 cookbooks:
   hopsworks:                                                                     
-    github: "hopshadoop/hopsworks-chef"
-    branch: "master"
+    github: "AlexHopsworks/hopsworks-chef"
+    branch: "vdcurrent"
 
 attrs:
   install:

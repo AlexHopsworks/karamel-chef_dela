@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #these variables are used together with 'sed' so please make sure to escape all / characters
-GITHUB="hopshadoop\/hopsworks-chef"
-BRANCH="master"
+GITHUB="AlexHopsworks\/hopsworks-chef"
+BRANCH="vdcurrent"
 
 #CLUSTER_SUFIX will be used as the three last digits for all the vm forwarded ports.
 #Make sure that different clusters working on the same machine have different suffixes
