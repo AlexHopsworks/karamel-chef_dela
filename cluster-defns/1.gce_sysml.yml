@@ -1,0 +1,62 @@
+name: Sysml5
+gce:
+    type: n1-highcpu-32
+    zone: us-west1-b
+    image: ubuntu-1604-xenial-v20180306
+    vpc: hopsfs-vpc
+    diskSize: 512
+
+cookbooks:
+  hopsworks:
+    github: AlexHopsworks/hopsworks-chef
+    branch: sysml
+
+attrs:
+  install:
+    dir: /srv/hops
+  kagent:
+    network:
+      interface: ens4
+  hops:
+    rmappsecurity:
+      actor_class: "org.apache.hadoop.yarn.server.resourcemanager.security.DevHopsworksRMAppSecurityActions"
+#  hopsworks:
+#    war_url: "http://snurran.sics.se/hops/alex/sysml/hopsworks/hopsworks-web.war"
+#    ca_url: "http://snurran.sics.se/hops/alex/sysml/hopsworks/hopsworks-ca.war"
+#    ear_url: "http://snurran.sics.se/hops/alex/sysml/hopsworks/hopsworks-ear.ear"
+  tensorflow:
+    hopstfdemo:
+      base_url: "http://snurran.sics.se/hops/alex/sysml"
+groups:
+  namenodes:
+    size: 1
+    recipes:
+      - kagent
+      - conda
+      - ndb::mgmd
+      - ndb::ndbd
+      - ndb::mysqld
+      - hops::ndb
+      - hops::rm
+      - hops::nn
+      - hops::jhs
+      - hadoop_spark::yarn
+      - hadoop_spark::historyserver
+      - flink::yarn
+      - elastic
+      - livy
+      - kzookeeper
+      - kkafka
+      - epipe
+      - hopsworks
+      - hopsmonitor
+      - hopslog
+      - hopslog::_filebeat-spark
+      - hopslog::_filebeat-serving
+      - hopslog::_filebeat-kagent
+      - hops::dn
+      - hops::nm
+      - tensorflow
+      - hive2
+      - hops_airflow
+      - hops_airflow::sqoop
