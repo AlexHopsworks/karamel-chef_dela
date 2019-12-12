@@ -1,0 +1,109 @@
+name: ProvenanceMultiNode
+baremetal:
+    username: vagrant
+cookbooks:
+  hopsworks:
+    github: "AlexHopsworks/hopsworks-chef"
+    branch: "provenance"
+attrs:
+  install:
+    dir: /srv/hops
+  hops:
+    num_replicas: 2
+    rmappsecurity:
+      actor_class: "org.apache.hadoop.yarn.server.resourcemanager.security.DevHopsworksRMAppSecurityActions"
+  alertmanager:
+    email:
+      to: sre@logicalclocks.com
+      from: hopsworks@logicalclocks.com
+      smtp_host: mail.hello.com
+  hopsworks:
+    kagent_liveness:
+      enabled: true
+      threshold: "40s"
+groups:
+  namenodes:
+    size: 1
+    baremetal:
+      ip: 192.168.56.101
+    recipes:
+      - kagent
+      - conda
+      - ndb::mgmd
+      - ndb::mysqld
+      - hops::ndb
+      - hops::rm
+      - hops::nn
+      - hops::jhs
+      - hadoop_spark::yarn
+      - hadoop_spark::historyserver
+      - hadoop_spark::certs
+      - flink::yarn
+      - flink::historyserver
+      - hopsworks
+      - hopsworks::dev
+      - hopsmonitor
+      - tensorflow
+      - hopslog
+      - hopslog::_filebeat-serving
+      - hopslog::_filebeat-kagent
+      - kzookeeper
+      - livy
+      - hive2
+      - kagent::dev
+      - hops_airflow
+      - hops_airflow::sqoop
+      - hopsmonitor::prometheus   
+      - hopsmonitor::alertmanager   
+      - hopsmonitor::node_exporter    
+      - hopsmonitor::purge_telegraf
+      - elastic
+  datanode1:
+    size: 1
+    baremetal:
+      ip: 192.168.56.102
+    recipes:
+      - kagent
+      - conda
+      - livy::install
+      - ndb::ndbd
+      - ndb::mysqld
+      - hops::ndb
+      - hops::nn
+      - hops::dn
+      - hops::nm
+      - kzookeeper
+      - epipe
+      - hadoop_spark::yarn
+      - hadoop_spark::certs
+      - flink::yarn
+      - hopslog::_filebeat-spark
+      - hopslog::_filebeat-kagent
+      - hopslog::_filebeat-beam
+      - tensorflow
+      - hopsmonitor::node_exporter    
+      - hopsmonitor::purge_telegraf
+      - elastic
+  datanode2:
+    size: 1
+    baremetal:
+      ip: 192.168.56.103
+    recipes:
+      - kagent
+      - conda
+      - livy::install
+      - ndb::ndbd
+      - kzookeeper
+      - elastic
+      - hops::dn
+      - hops::nm
+      - kkafka
+      - hadoop_spark::yarn
+      - hadoop_spark::certs
+      - flink::yarn
+      - hopslog::_filebeat-spark
+      - hopslog::_filebeat-kagent
+      - hopslog::_filebeat-beam
+      - tensorflow
+      - hopsmonitor::node_exporter
+      - hopsmonitor::purge_telegraf
