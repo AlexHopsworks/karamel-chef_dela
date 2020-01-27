@@ -1,0 +1,78 @@
+box = "centos/7"
+
+Vagrant.configure("2") do |config|
+  config.ssh.insert_key = false
+  config.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: "images"
+
+  config.vm.define "centos-name" do |hopsworks|
+    hopsworks.vm.hostname = 'hopsworks0.logicalclocks.com'
+    hopsworks.vm.box = box
+    hopsworks.vm.network :private_network, ip: "10.0.3.15"
+    hopsworks.vm.network :forwarded_port, guest: 22, host: 10022, id: "ssh"
+    # karamel http
+     hopsworks.vm.network(:forwarded_port, {:guest=>9090, :host=>9090})
+     # Hopsworks http
+     hopsworks.vm.network(:forwarded_port, {:guest=>8181, :host=>8181})
+     # Glassfish admin UI
+     hopsworks.vm.network(:forwarded_port, {:guest=>4848, :host=>4848})
+     # MySQL Server
+     hopsworks.vm.network(:forwarded_port, {:guest=>3306, :host=>3306})
+     # Glassfish debug port
+     hopsworks.vm.network(:forwarded_port, {:guest=>9009, :host=>9009})
+     # GDB Remote debug port
+     hopsworks.vm.network(:forwarded_port, {:guest=>12345, :host=>12345})
+
+    hopsworks.vm.provider "libvirt" do |d|
+      d.memory = 30720
+      d.graphics_type = "none"
+      d.cpus = 10
+      d.storage_pool_name="jenkins-vdisk"
+      d.storage :file, :size => '100G', :path => 'centos-name.0.img'
+      d.driver="kvm"
+      d.uri="qemu:///system"
+    end
+
+    hopsworks.vm.provision "shell", inline: "mkfs.ext4 /dev/vdb"
+    hopsworks.vm.provision "shell", inline: "mkdir -p /srv/hops"
+    hopsworks.vm.provision "shell", inline: "mount /dev/vdb /srv/hops"
+
+    hopsworks.vm.provision "file", source: "~/.vagrant.d/insecure_private_key", destination: "~/.ssh/id_rsa"
+    hopsworks.vm.provision "file", source: "cluster.yml", destination: "cluster.yml"
+    hopsworks.vm.synced_folder "../repos/hopsworks-ee", "/home/vagrant/hopsworks", type: "rsync", create: true
+    #hopsworks.vm.provision "file", source: "~/.m2/settings.xml", destination: "~/.m2/settings.xml"
+
+    # Mount .m2 directory for maven cache
+    hopsworks.vm.synced_folder "../m2", "/root/.m2", create: true
+
+    hopsworks.vm.provision :chef_solo do |chef|
+      chef.version = "13.12.14"
+      chef.cookbooks_path = "cookbooks"
+      chef.json = {
+        "karamel" => {
+          "default" => {
+            "private_ips" => ["10.0.3.15"]
+          },
+          "run_timeout" => 36000,
+        },
+        "build" => {
+          "test" => {
+             "community" => false
+          }
+        },
+        "test" => {
+          "hopsworks" => {
+            "repo" => "https://github.com/hopsworksjenkins/hopsworks-ee",
+            "branch" => "BRANCH",
+            "it" => false
+          },
+          "community" => false
+        }
+      }
+      chef.add_recipe "karamel::install"
+      #chef.add_recipe "karamel::build"
+      chef.add_recipe "karamel::default"
+      chef.add_recipe "karamel::run"
+      #chef.add_recipe "karamel::test"
+    end
+  end
+end
