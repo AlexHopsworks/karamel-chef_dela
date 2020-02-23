@@ -19,7 +19,7 @@ forwarded_port=
 ports=
 #http_port=8080
 
-VBOX_MANAGE=/usr/bin/VBoxManage
+VBOX_MANAGE=/usr/local/bin/VBoxManage
 OCTETS="192.168."
 ORIGINAL_OCTETS=${OCTETS}"56"
 
