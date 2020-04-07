@@ -8,7 +8,9 @@ when 'ubuntu'
     retries 5
     code <<-EOH
       # https://linuxize.com/post/how-to-install-ruby-on-ubuntu-18-04/
-      curl -sL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash -
+      curl -sL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash - || true
+      export PATH="$HOME/.rbenv/bin:$PATH"
+      eval "$(rbenv init -)"
       echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
       echo 'eval "$(rbenv init -)"' >> ~/.bashrc
       source ~/.bashrc
