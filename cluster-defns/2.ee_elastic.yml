@@ -101,7 +101,6 @@ groups:
       - hopsmonitor::prometheus
       - hopsmonitor::alertmanager
       - hopsmonitor::node_exporter
-      - hopsmonitor::purge_telegraf
       - kube-hops::hopsworks
       - kube-hops::ca
       - kube-hops::master
