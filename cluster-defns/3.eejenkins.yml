@@ -32,8 +32,11 @@ attrs:
        expiration_safety_period: "30m"
     encrypt_data_transfer:
      enabled: true
-  prometheus:
-    retention_time: "2h"
+    xattrs:
+      max-xattrs-per-inode: 127
+      max-xattr-size: 3442755
+    yarn:
+      cgroups_strict_resource_usage: "true"
   hopsworks:
     featurestore_online: true
     encryption_password: "verysecurepassword"
@@ -55,6 +58,8 @@ attrs:
       to: sre@logicalclocks.com
       from: hopsworks@logicalclocks.com
       smtp_host: mail.hello.com
+  prometheus:
+    retention_time: "2h"
   elastic:
 
     opendistro_security:
@@ -119,6 +124,7 @@ groups:
       - hops::nm
       - kzookeeper
       - kkafka
+      - livy::install
       - epipe
       - hadoop_spark::yarn
       - flink::yarn
@@ -143,6 +149,7 @@ groups:
       - hops::dn
       - hops::nm
       - kkafka
+      - livy::install
       - hadoop_spark::yarn
       - flink::yarn
       - hopslog::_filebeat-spark
