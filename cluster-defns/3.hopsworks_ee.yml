@@ -30,8 +30,6 @@ attrs:
       actor_class: "org.apache.hadoop.yarn.server.resourcemanager.security.DevHopsworksRMAppSecurityActions"
       x509:
         expiration_safety_period: "30m"
-    encrypt_data_transfer:
-      enabled: true
   hopsworks:
     featurestore_online: true
     encryption_password: "verysecurepassword"
