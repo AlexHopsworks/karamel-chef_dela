@@ -1,0 +1,128 @@
+name: HopsworksHeapTest
+baremetal:
+    username: cloud-user
+cookbooks:
+  hopsworks:
+    github: AlexHopsworks/hopsworks-chef
+    branch: heap-1.4
+attrs:
+  install:
+    dir: /srv/hops
+    kubernetes: true
+    enterprise:
+      install: true
+      download_url: "https://nexus.hops.works/repository"
+      username: ""
+      password: ""
+  kube-hops:
+    pki:
+      verify_hopsworks_cert: false
+    master:
+      untaint: true
+  hops:
+    dn:
+      data_dir: "file:///mnt/disk1/hopsfs-data"
+    num_replicas: 1
+    tls:
+     enabled: true
+     crl_enabled: true
+     crl_fetcher_class: "org.apache.hadoop.security.ssl.DevRemoteCRLFetcher"
+     crl_fetcher_interval: "5m"
+    rmappsecurity:
+     actor_class: "org.apache.hadoop.yarn.server.resourcemanager.security.DevHopsworksRMAppSecurityActions"
+     x509:
+       expiration_safety_period: "30m"
+    encrypt_data_transfer:
+     enabled: true
+  prometheus:
+    retention_time: "2h"
+  hopsworks:
+    featurestore_online: true
+    encryption_password: "verysecurepassword"
+    application_certificate_validity_period: "45m"
+    kagent_liveness:
+     enabled: true
+     threshold: "10s"
+    jwt:
+     lifetime_ms: '43200000'
+    hive2:
+      scratch_dir_delay: "30s"
+      scratch_dir_cleaner_interval: "10s"
+  #ndb:
+  #  DataMemory: '256'
+  jupyter:
+    shutdown_timer_interval: "1m"
+  alertmanager:
+    email:
+      to: sre@logicalclocks.com
+      from: hopsworks@logicalclocks.com
+      smtp_host: mail.hello.com
+  elastic:
+    opendistro_security:
+      jwt:
+        exp_ms: "1800000"
+      audit:
+        enable_rest: "true"
+        enable_transport: "false"
+groups:
+  namenodes:
+    size: 1
+    baremetal:
+      ip: 192.168.1.21
+    recipes:
+      - kagent
+      - conda
+      - ndb::mgmd
+      - ndb::ndbd
+      - ndb::mysqld
+      - hops::ndb
+      - hops::rm
+      - hops::nn
+      - hops::dn
+      - hops::nm
+      - hops::jhs
+      - hadoop_spark::yarn
+      - hadoop_spark::historyserver
+      - flink::yarn
+      - flink::historyserver
+      - elastic
+      - livy
+      - kzookeeper
+      - kkafka
+      - epipe
+      - hopsworks
+      - hopsmonitor
+      - hopslog
+      - hopslog::_filebeat-spark
+      - hopslog::_filebeat-serving
+      - hopslog::_filebeat-beam
+      - hopslog::_filebeat-jupyter
+      - tensorflow
+      - hive2
+      - hops_airflow
+      - hops_airflow::sqoop
+      - hopsmonitor::prometheus
+      - hopsmonitor::alertmanager
+      - hopsmonitor::node_exporter
+      - kube-hops::hopsworks
+      - kube-hops::ca
+      - kube-hops::master
+      - kube-hops::addons
+      - consul::master
+      - hops::docker_registry
+  worker:
+    size: 1
+    baremetal:
+      ip: 192.168.1.31
+    recipes:
+      - kagent
+      - conda
+      - livy::install
+      - hops::nm
+      - hadoop_spark::yarn
+      - flink::yarn
+      - hopslog::_filebeat-spark
+      - hopslog::_filebeat-beam
+      - tensorflow
+      - hopsmonitor::node_exporter
+      - consul::slave
