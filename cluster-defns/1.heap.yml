@@ -89,7 +89,6 @@ groups:
       - kkafka
       - epipe
       - hopsworks
-      - hopsworks::migrate
       - hopsmonitor
       - hopslog
       - hopslog::_filebeat-spark
