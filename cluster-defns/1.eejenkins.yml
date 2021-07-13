@@ -8,6 +8,7 @@ cookbooks:
 attrs:
   install:
     dir: /srv/hops
+    dev_ssh_keys: true
     kubernetes: true
     enterprise:
       install: true
@@ -32,9 +33,20 @@ attrs:
        expiration_safety_period: "30m"
     encrypt_data_transfer:
      enabled: true
+    xattrs:
+      max-xattrs-per-inode: 127
+      max-xattr-size: 3442755
     yarn:
       vcores: 3
       memory_mbs: 10000
+      cgroups_strict_resource_usage: "true"
+  jupyter:
+    shutdown_timer_interval: "1m"
+  alertmanager:
+    email:
+      to: sre@logicalclocks.com
+      from: hopsworks@logicalclocks.com
+      smtp_host: mail.hello.com
   prometheus:
     retention_time: "2h"
   hopsworks:
@@ -43,19 +55,12 @@ attrs:
     application_certificate_validity_period: "45m"
     kagent_liveness:
      enabled: true
-     threshold: "10s"
+     threshold: "40s"
     jwt:
      lifetime_ms: '43200000'
     hive2:
       scratch_dir_delay: "30s"
       scratch_dir_cleaner_interval: "10s"
-  jupyter:
-    shutdown_timer_interval: "1m"
-  alertmanager:
-    email:
-      to: sre@logicalclocks.com
-      from: hopsworks@logicalclocks.com
-      smtp_host: mail.hello.com
   elastic:
     opendistro_security:
       jwt:
@@ -64,9 +69,10 @@ attrs:
         enable_rest: "true"
         enable_transport: "false"
   ndb:
-    DataMemory: '1024'
+    DataMemory: '1024'  
     configuration:
       profile: "tiny"
+
 groups:
   namenodes:
     size: 1
@@ -82,7 +88,6 @@ groups:
       - hops::rm
       - hops::nn
       - hops::jhs
-      - hops::docker_registry
       - hadoop_spark::yarn
       - hadoop_spark::historyserver
       - flink::yarn
@@ -93,11 +98,11 @@ groups:
       - kkafka
       - epipe
       - hopsworks
-      - hopsworks::migrate
       - hopsmonitor
       - hopslog
       - hopslog::_filebeat-spark
       - hopslog::_filebeat-serving
+      - hopslog::_filebeat-jupyter
       - hops::dn
       - hops::nm
       - tensorflow
@@ -111,4 +116,5 @@ groups:
       - kube-hops::master
       - kube-hops::addons
       - consul::master
+      - hops::docker_registry
       - onlinefs

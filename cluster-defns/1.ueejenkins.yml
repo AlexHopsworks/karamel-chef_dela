@@ -8,16 +8,21 @@ cookbooks:
 attrs:
   install:
     dir: /srv/hops
+    dev_ssh_keys: true
     enterprise:
       install: true
       download_url: "https://nexus.hops.works/repository"
       username: ""
       password: ""
-  ndb:
-    DataMemory: '1024'
   jupyter:
     shutdown_timer_interval: "1m"
-  hops:
+  hops:   
+    num_replicas: 1
+    tls:
+     enabled: true
+     crl_enabled: true
+     crl_fetcher_class: "org.apache.hadoop.security.ssl.DevRemoteCRLFetcher"
+     crl_fetcher_interval: "5m"
     rmappsecurity:
       actor_class: "org.apache.hadoop.yarn.server.resourcemanager.security.DevHopsworksRMAppSecurityActions"
     xattrs:
@@ -25,24 +30,36 @@ attrs:
       max-xattr-size: 3442755
     yarn:
       cgroups_strict_resource_usage: "true"
-  hopsworks:
-    featurestore_online: true
-    encryption_password: "verysecurepassword"
-    kagent_liveness:
-     enabled: true
-     threshold: "10s"
-    jwt:
-     lifetime_ms: '43200000'
-    hive2:
-      scratch_dir_delay: "30s"
-      scratch_dir_cleaner_interval: "10s"
-  prometheus:
-    retention_time: "2h"
   alertmanager:
     email:
       to: sre@logicalclocks.com
       from: hopsworks@logicalclocks.com
       smtp_host: mail.hello.com
+  prometheus:
+    retention_time: "2h"
+  hopsworks:
+    featurestore_online: true
+    encryption_password: "verysecurepassword"
+    kagent_liveness:
+     enabled: true
+     threshold: "40s"
+    jwt:
+     lifetime_ms: '43200000'
+    hive2:
+      scratch_dir_delay: "30s"
+      scratch_dir_cleaner_interval: "10s"
+  elastic:  
+    opendistro_security:
+      jwt:
+        exp_ms: "1800000"
+      audit:
+        enable_rest: "true"
+        enable_transport: "false"
+  ndb:  
+    DataMemory: '1024'
+    configuration:
+      profile: "tiny"
+
 groups:
   namenodes:
     size: 1
@@ -58,7 +75,6 @@ groups:
       - hops::rm
       - hops::nn
       - hops::jhs
-      - hops::docker_registry
       - hadoop_spark::yarn
       - hadoop_spark::historyserver
       - flink::yarn
@@ -69,7 +85,6 @@ groups:
       - kkafka
       - epipe
       - hopsworks
-      - hopsworks::migrate
       - hopsmonitor
       - hopslog
       - hopslog::_filebeat-spark
@@ -84,3 +99,5 @@ groups:
       - hopsmonitor::alertmanager
       - hopsmonitor::node_exporter
       - consul::master
+      - hops::docker_registry
+      - onlinefs

@@ -43,26 +43,11 @@ Vagrant.configure("2") do |config|
                      "private_ips" => ["10.0.2.15"]
              },
              "run_timeout" => 36000,
-           },
-           "build" => {
-             "test" => {
-                "community" => false
-             }
-           },
-           "test" => {
-             "hopsworks" => {
-               "repo" => "https://github.com/hopsworksjenkins/hopsworks-ee",
-               "branch" => "BRANCH",
-              "it" => false
-             },
-             "community" => false
            }
          }
          chef.add_recipe "karamel::install"
-         #chef.add_recipe "karamel::build"
          chef.add_recipe "karamel::default"
          chef.add_recipe "karamel::run"
-         #chef.add_recipe "karamel::test"
      end
     end
 end
